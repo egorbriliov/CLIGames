@@ -1,5 +1,6 @@
-import os
 import random
+from app.functions import y_or_n_get
+from app.decorators import cls_clear
 
 
 class Board:
@@ -70,12 +71,12 @@ class TicTacToe:
         self.x_or_o = None
         self.board = Board()
 
+    @cls_clear(time_to_sleep=1)
     def x_or_y_get(self):
         """
         Получает значение, которым собирается играть пользователь.
         Если введённое значение не является правильным: выводит ошибку и перезапускает механизм.
         """
-        os.system('cls||clear')
         # Получение значения
         x_or_o = input("\nКем вы хотите играть? (X/O)\n").lower()
         # Если значение не равно O или X
@@ -91,13 +92,13 @@ class TicTacToe:
             # Запускает первый шаг
             self.step()
 
+    @cls_clear(time_to_sleep=1)
     def step(self):
         """
         Создаёт новый ход:
         Если есть победитель: выводит его
         Если нет победителя выводит поле
         """
-        os.system('cls||clear')
         # Попытка получить значение победителя
         winner_value = self.board.show()
         # Если победителя нет
@@ -133,34 +134,26 @@ class TicTacToe:
         else:
             print("\n", winner_value, "выигрывает")
 
-            def ask(question):
-                yes_or_no = input(question)
-                yes_or_no.lower()
-                return yes_or_no
-
-            ask_answer = ""
-            while ask_answer not in ["y", "n"]:
-                os.system('cls||clear')
-                ask_answer = ask(question="\nХотите сыграть ещё? (Y/N)\n")
-            else:
-                if ask_answer == "y":
-                    self.board.board = [
-                        [" ", " ", " "],
-                        [" ", " ", " "],
-                        [" ", " ", " "]
-                    ]
-                    self.x_or_y_get()
-                else:
-                    ask_answer = ""
-                    while ask_answer not in ["y", "n"]:
-                        os.system('cls||clear')
-                        ask_answer = ask(question="\nЖелаете выбрать другую игру?\n")
-                    if ask_answer == "y":
-                        from main import GamesManager
-                        games = GamesManager()
-                        games.start()
-                    else:
+            answer = y_or_n_get(question="\nХотите сыграть ещё? (Y/N)\n")
+            if answer == "y":
+                self.board.board = [
+                    [" ", " ", " "],
+                    [" ", " ", " "],
+                    [" ", " ", " "]
+                ]
+                self.x_or_y_get()
+            elif answer == "n":
+                answer = y_or_n_get(question="\nЖелаете выбрать другую игру? (Y/N)\n")
+                if answer == "y":
+                    from main import GamesManager
+                    games = GamesManager()
+                    games.start()
+                elif answer == "n":
+                    @cls_clear(time_to_sleep=1)
+                    def print_exit():
                         print(f"\nСпасибо что был со мной!")
+
+                    print_exit()
 
 
 def start():
